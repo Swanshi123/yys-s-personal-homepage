@@ -1,0 +1,258 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiara - 媒体宣发简历</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
+        }
+        .section-header {
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, #2563eb, #60a5fa);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .project-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        .project-title {
+            color: #1f2937;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+        .project-details {
+            color: #4b5563;
+            font-size: 0.95rem;
+            font-style: italic;
+        }
+        .star-item {
+            margin-top: 0.75rem;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+        .star-item strong {
+            color: #2563eb;
+            font-weight: 600;
+        }
+        .contact-info a, .project-link a {
+            color: #2563eb;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .contact-info a:hover, .project-link a:hover {
+            color: #1e40af;
+            text-decoration: underline;
+        }
+        .intro-text {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="max-w-4xl mx-auto p-8">
+    <header class="text-center mb-12">
+        <h1 class="text-5xl font-bold text-gray-800">Tiara</h1>
+        <p class="text-xl text-gray-600 mt-3">新媒体宣发 · 影视策划 · 整合营销</p>
+        <p class="text-gray-600 mt-4 contact-info">
+            邮箱：<a href="mailto:yourname@xxx.com">yourname@xxx.com</a> | 
+            微信：yourname | 
+            机构：<a href="https://d.rrsp.com.cn/" target="_blank">RRTV</a>
+        </p>
+    </header>
+
+    <section>
+        <h2 class="text-3xl font-semibold section-header">网络电影</h2>
+
+        <div class="project-card">
+            <h3 class="project-title">《地宫笔记之五百龙首》（2020）</h3>
+            <p class="project-details">奇幻冒险 · 主演：刘冠麟</p>
+            <p class="project-link"><a href="https://movie.douban.com/subject/35200744/" target="_blank">豆瓣链接（点击）</a></p>
+            <p class="intro-text">
+                《地宫笔记》发生在人口密集的南京城河底，首次探秘水底古墓，危险指数和难度系数极高。热衷考古研究的王教授（高玉庆饰）、曹欣欣（杨欣颖饰）与齐小白（刘冠麟饰）加入了这段惊险刺激的水下盗墓之旅。
+            </p>
+            <div class="star-item">
+                <strong>Situation:</strong> 影片需在竞争激烈的流媒体市场中脱颖而出，吸引观众点击。
+            </div>
+            <div class="star-item">
+                <strong>Task:</strong> 通过新媒体宣发提升影片在爱奇艺平台的播放热度和曝光量。
+            </div>
+            <div class="star-item">
+                <strong>Action:</strong> 协调抖音/快手影视垂类达人120+同步投放，策划话题#水下古墓有多危险，优化流量采买策略，确保CPC低于行业均值18%。
+            </div>
+            <div class="star-item">
+                <strong>Result:</strong> 单条视频最高4600万播放，ROI达1∶4.3，话题总曝光1.2亿，带动爱奇艺站内热度峰值6200，新增点击贡献18%。
+            </div>
+        </div>
+
+        <div class="project-card">
+            <h3 class="project-title">《暴走狂花之正义校花》（2021）</h3>
+            <p class="project-details">动作喜剧 · 出品人：包贝尔</p>
+            <p class="project-link"><a href="https://movie.douban.com/subject/35400713/" target="_blank">豆瓣链接（点击）</a></p>
+            <p class="intro-text">
+                一部动作喜剧片，讲述四位校花化身正义使者的故事，融合幽默与热血元素，主演包括张梦露、徐轸轸、孙美楠、靳阳阳，深受年轻观众喜爱。
+            </p>
+            <div class="star-item">
+                <strong>Situation:</strong> 系列影片需在流媒体平台中保持高热度，吸引动作喜剧受众。
+            </div>
+            <div class="star-item">
+                <strong>Task:</strong> 通过新媒体活动提升系列影片的曝光量和票房表现。
+            </div>
+            <div class="star-item">
+                <strong>Action:</strong> 发起抖音“功夫女团”挑战赛，联合快手MCN矩阵联动，优化流量采买降低CPC 22%。
+            </div>
+            <div class="star-item">
+                <strong>Result:</strong> 挑战赛获3.1亿播放，系列两部累计分账票房2100万，平台热度连续10日TOP3。
+            </div>
+        </div>
+
+        <div class="project-card">
+            <h3 class="project-title">《张震讲故事之洗脸女生的传说》（2021）</h3>
+            <p class="project-details">悬疑惊悚 · 国民级 IP 改编</p>
+            <p class="project-link"><a href="https://movie.douban.com/subject/35419518/" target="_blank">豆瓣链接（点击）</a></p>
+            <p class="intro-text">
+                改编自经典恐怖IP，讲述褚甜甜和钱思楠在练习生培训中的诡异经历，围绕洗脸女生传说展开，营造紧张刺激的氛围，吸引恐怖片爱好者。
+            </p>
+            <div class="star-item">
+                <strong>Situation:</strong> 影片需在恐怖片市场中吸引核心受众，提升平台点击率。
+            </div>
+            <div class="star-item">
+                <strong>Task:</strong> 提高爱奇艺站内热度，扩大女性用户群体占比。
+            </div>
+            <div class="star-item">
+                <strong>Action:</strong> 协调抖音+快手恐怖垂类达人90+同步发布，策划小红书女性变装话题渗透，优化投放以提升CTR至9.8%。
+            </div>
+            <div class="star-item">
+                <strong>Result:</strong> 72小时内爱奇艺站内热度提升2300点，女性用户占比从45%增至71%。
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-8">
+        <h2 class="text-3xl font-semibold section-header">影视剧</h2>
+
+        <div class="project-card">
+            <h3 class="project-title">《灵丹妙药不及你》（2021）</h3>
+            <p class="project-details">古装爱情 · 中医文化+甜宠</p>
+            <p class="project-link"><a href="https://movie.douban.com/subject/35605558/" target="_blank">豆瓣链接（点击）</a></p>
+            <p class="intro-text">
+                一部古装甜宠剧，融合中医文化与浪漫爱情，讲述医者与患者的温馨故事，主演包括丁一一、王浩歌，深受年轻观众喜爱。
+            </p>
+            <div class="star-item">
+                <strong>Situation:</strong> 剧集需在年轻观众中建立情感共鸣，提升平台指数和讨论度。
+            </div>
+            <div class="star-item">
+                <strong>Task:</strong> 通过新媒体推广增加剧集在B站和微博的热度。
+            </div>
+            <div class="star-item">
+                <strong>Action:</strong> 联合B站影视UP主40+共创内容，策划微博话题#中医也能发糖，优化视频和话题投放策略。
+            </div>
+            <div class="star-item">
+                <strong>Result:</strong> 单条视频最高480万播放，剧集指数上涨40%，微博话题阅读5000万，讨论12万，稳居站内热搜榜。
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-8">
+        <h2 class="text-3xl font-semibold section-header">游戏宣发</h2>
+
+        <div class="project-card">
+            <h3 class="project-title">《球球大作战》× 巨人网络</h3>
+            <p class="project-link"><a href="https://www.douban.com/game/26789825/" target="_blank">豆瓣链接（点击）</a></p>
+            <p class="intro-text">
+                一款多人竞技手游，以简单操作和快节奏对战著称，吸引了大量年轻玩家。
+            </p>
+            <div class="star-item">
+                <strong>Situation:</strong> 游戏需通过创新推广活动吸引新用户并提升活跃度。
+            </div>
+            <div class="star-item">
+                <strong>Task:</strong> 增加游戏下载量和线下活动参与度，提升品牌影响力。
+            </div>
+            <div class="star-item">
+                <strong>Action:</strong> 定制主题曲并发起抖音舞蹈接力赛，联合10城线下主题展，优化激活成本降低19%。
+            </div>
+            <div class="star-item">
+                <strong>Result:</strong> 主题曲24小时内登QQ音乐飙升榜TOP1，抖音舞蹈接力赛7天获5.3亿播放，线下主题展总到场110万人次。
+            </div>
+        </div>
+
+        <div class="project-card">
+            <h3 class="project-title">《梦幻西游》主题曲宣发 × 0713 再就业男团×网易</h3>
+            <p class="project-link"><a href="https://www.douban.com/game/10739919/" target="_blank">豆瓣链接（点击）</a></p>
+            <p class="intro-text">
+                为经典MMORPG《梦幻西游》推广主题曲，结合0713再就业男团的热度，打造跨平台音乐营销。
+            </p>
+            <div class="star-item">
+                <strong>Situation:</strong> 主题曲需在社交媒体上快速引爆，增强游戏文化影响力。
+            </div>
+            <div class="star-item">
+                <strong>Task:</strong> 提升微博和B站的讨论度，推动主题曲进入热搜榜。
+            </div>
+            <div class="star-item">
+                <strong>Action:</strong> 联合0713再就业男团推出B站微综艺，策划微博游戏分榜热搜话题，优化跨平台内容投放。
+            </div>
+            <div class="star-item">
+                <strong>Result:</strong> 微博游戏分榜热搜第2位，话题阅读2.8亿，B站微综艺3期总播放2000万，弹幕互动率6.5%，网易云音乐评论5.4万条。
+            </div>
+        </div>
+    </section>
+
+    <footer class="text-center mt-12 text-gray-600">
+        <p>© 2025 Tiara | 新媒体宣发专家</p>
+    </footer>
+</body>
+</html>
